@@ -1,7 +1,6 @@
 # Amarillo's Vibrance
 
-What is this?
-=============
+## What is this?
 A Blender addon that adds a Compositor Node Group called Amarillo's Vibrance. It tries to emulate Photoshop's Vibrance adjustment while adding a little extra on top.
 
 **Unprocessed colors:**
