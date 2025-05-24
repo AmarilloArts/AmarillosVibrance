@@ -8,14 +8,14 @@ A Blender addon that adds a Compositor Node Group called Amarillo's Vibrance. It
 
 ![](https://i.imgur.com/qcavzim.png)
 
-**Vanilla Saturation:**
-
-![](https://i.imgur.com/fyrVHov.png)
-
 **Amarillo's Vibrance:**
 
 The difference with "Unprocessed colors" is subtle, but huge in the proper context. Here the skin tones look richer, while leaving the stronger colors untouched.
 ![](https://i.imgur.com/i6UICcI.png)
+
+**Vanilla Saturation:**
+
+![](https://i.imgur.com/fyrVHov.png)
 
 **Amarillo's Vibrance Boosted:**
 
