@@ -14,9 +14,11 @@ A Blender addon that adds a Compositor Node Group called Amarillo's Vibrance. It
 
 **Amarillo's Vibrance:**
 
+The difference with "Unprocessed colors" is subtle, but huge in the proper context. Here the skin tones look richer, while leaving the stronger colors untouched.
 ![](https://i.imgur.com/i6UICcI.png)
 
 **Amarillo's Vibrance Boosted**
+
 ![](https://i.imgur.com/Mbdp7V2.png)
 
 **Vibrance**
