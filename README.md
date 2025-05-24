@@ -14,7 +14,10 @@ A Blender addon that adds a Compositor Node Group called Amarillo's Vibrance. It
 
 **Amarillo's Vibrance:**
 
-![](https://i.imgur.com/QjZ3s1E.png)
+![](https://i.imgur.com/i6UICcI.png)
+
+**Amarillo's Vibrance Boosted**
+![](https://i.imgur.com/Mbdp7V2.png)
 
 **Vibrance**
 
