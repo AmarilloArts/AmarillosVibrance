@@ -33,4 +33,4 @@ This value lets you play with the falloff of the vibrance. 0 means regular Vibra
 Your typical Blender "Fac" parameter that controls how much this node affets the mix. 0 means no Vibrance added at all (which is the same as not using this node). 1 means full effect.
 
 ## Wow you must be a genious!!
-Thank ChatGPT, not me. I won't take real "credit" for this. I just sat with the good ol' Yippity for an hour or two.
+Thank ChatGPT, not me. I won't take real "credit" for this. I just sat with the ol' Yippity for an hour or two.
