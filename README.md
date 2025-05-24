@@ -4,13 +4,16 @@ What is this?
 =============
 A Blender addon that adds a Compositor Node Group called Amarillo's Vibrance. It tries to emulate Photoshop's Vibrance adjustment while adding a little extra on top.
 
-Unprocessed colors:
+**Unprocessed colors:**
+
 ![](https://i.imgur.com/qcavzim.png)
 
-Vanilla Saturation:
+**Vanilla Saturation:**
+
 ![](https://i.imgur.com/fyrVHov.png)
 
-Amarillo's Vibrance:
+**Amarillo's Vibrance:**
+
 ![](https://i.imgur.com/QjZ3s1E.png)
 
 **Vibrance**
