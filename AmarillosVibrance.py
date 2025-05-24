@@ -1,14 +1,15 @@
 bl_info = {
     "name": "Amarillo's Vibrance",
     "author": "Amarillo",
-    "version": (4, 0),
+    "version": (4, 1),
     "blender": (4, 4, 0),
-    "location": "Node Editor > Add > Color > Amarillo's Vibrance",
-    "description": "Applies vibrance with falloff control for saturated areas. RGB-safe, brightness-preserving.",
+    "location": "Node Editor > Add > Group > Amarillo's Vibrance",
+    "description": "Applies vibrance boost with saturation falloff. RGB-safe, brightness-preserving.",
     "category": "Node",
 }
 
 import bpy
+from bpy.app.handlers import persistent
 
 def create_vibrance_group():
     name = "Amarillo's Vibrance"
@@ -37,11 +38,9 @@ def create_vibrance_group():
     output = group.nodes.new("NodeGroupOutput")
     output.location = (1000, 0)
 
-    # Separate RGB
     sep = group.nodes.new("CompositorNodeSeparateXYZ")
     sep.location = (-800, 0)
 
-    # Luminance (gray)
     avg1 = group.nodes.new("CompositorNodeMath")
     avg1.operation = 'ADD'
     avg1.location = (-600, 100)
@@ -55,7 +54,6 @@ def create_vibrance_group():
     div3.inputs[1].default_value = 3.0
     div3.location = (-200, 100)
 
-    # Diff from gray
     diff_r = group.nodes.new("CompositorNodeMath")
     diff_r.operation = 'SUBTRACT'
     diff_r.location = (-600, -100)
@@ -68,7 +66,6 @@ def create_vibrance_group():
     diff_b.operation = 'SUBTRACT'
     diff_b.location = (-600, -200)
 
-    # Saturation estimate: max - min
     max1 = group.nodes.new("CompositorNodeMath")
     max1.operation = 'MAXIMUM'
     max1.location = (-800, -300)
@@ -98,6 +95,17 @@ def create_vibrance_group():
     curve.operation = 'POWER'
     curve.location = (0, -325)
 
+    # Saturation Boost remap: (1 - boost) * 5
+    invert_boost = group.nodes.new("CompositorNodeMath")
+    invert_boost.operation = 'SUBTRACT'
+    invert_boost.inputs[0].default_value = 1.0
+    invert_boost.location = (-50, -250)
+
+    remap_boost = group.nodes.new("CompositorNodeMath")
+    remap_boost.operation = 'MULTIPLY'
+    remap_boost.inputs[1].default_value = 5.0
+    remap_boost.location = (100, -250)
+
     scaled = group.nodes.new("CompositorNodeMath")
     scaled.operation = 'MULTIPLY'
     scaled.location = (200, -325)
@@ -107,7 +115,6 @@ def create_vibrance_group():
     final_boost.inputs[0].default_value = 1.0
     final_boost.location = (400, -325)
 
-    # Adjust RGB: gray + (channel - gray) * boost
     mult_r = group.nodes.new("CompositorNodeMath")
     mult_r.operation = 'MULTIPLY'
     mult_r.location = (200, -100)
@@ -142,14 +149,12 @@ def create_vibrance_group():
     # Wiring
     group.links.new(input.outputs["Image"], sep.inputs[0])
 
-    # Gray
     group.links.new(sep.outputs[0], avg1.inputs[0])
     group.links.new(sep.outputs[1], avg1.inputs[1])
     group.links.new(avg1.outputs[0], avg2.inputs[0])
     group.links.new(sep.outputs[2], avg2.inputs[1])
-    group.links.new(avg2.outputs[0], div3.inputs[0])  # gray
+    group.links.new(avg2.outputs[0], div3.inputs[0])
 
-    # Diff
     group.links.new(sep.outputs[0], diff_r.inputs[0])
     group.links.new(div3.outputs[0], diff_r.inputs[1])
     group.links.new(sep.outputs[1], diff_g.inputs[0])
@@ -157,7 +162,6 @@ def create_vibrance_group():
     group.links.new(sep.outputs[2], diff_b.inputs[0])
     group.links.new(div3.outputs[0], diff_b.inputs[1])
 
-    # Saturation
     group.links.new(sep.outputs[0], max1.inputs[0])
     group.links.new(sep.outputs[1], max1.inputs[1])
     group.links.new(max1.outputs[0], max2.inputs[0])
@@ -170,35 +174,26 @@ def create_vibrance_group():
     group.links.new(min2.outputs[0], sat.inputs[1])
     group.links.new(sat.outputs[0], inv_sat.inputs[1])
     group.links.new(inv_sat.outputs[0], curve.inputs[0])
-    invert_boost = group.nodes.new("CompositorNodeMath")
-    invert_boost.operation = 'SUBTRACT'
-    invert_boost.inputs[0].default_value = 1.0
-    invert_boost.location = (-50, -250)
 
-    remap_boost = group.nodes.new("CompositorNodeMath")
-    remap_boost.operation = 'MULTIPLY'
-    remap_boost.inputs[1].default_value = 5.0
-    remap_boost.location = (100, -250)
     group.links.new(input.outputs["Saturation Boost"], invert_boost.inputs[1])
     group.links.new(invert_boost.outputs[0], remap_boost.inputs[0])
     group.links.new(remap_boost.outputs[0], curve.inputs[1])
+
     group.links.new(curve.outputs[0], scaled.inputs[0])
     group.links.new(input.outputs["Vibrance"], scaled.inputs[1])
     group.links.new(scaled.outputs[0], final_boost.inputs[1])
 
-    # R
+    # Final RGB
     group.links.new(diff_r.outputs[0], mult_r.inputs[0])
     group.links.new(final_boost.outputs[0], mult_r.inputs[1])
     group.links.new(div3.outputs[0], add_r.inputs[0])
     group.links.new(mult_r.outputs[0], add_r.inputs[1])
 
-    # G
     group.links.new(diff_g.outputs[0], mult_g.inputs[0])
     group.links.new(final_boost.outputs[0], mult_g.inputs[1])
     group.links.new(div3.outputs[0], add_g.inputs[0])
     group.links.new(mult_g.outputs[0], add_g.inputs[1])
 
-    # B
     group.links.new(diff_b.outputs[0], mult_b.inputs[0])
     group.links.new(final_boost.outputs[0], mult_b.inputs[1])
     group.links.new(div3.outputs[0], add_b.inputs[0])
@@ -215,22 +210,27 @@ def create_vibrance_group():
 
     return group
 
-import bpy.app.timers
-
-def safe_create_vibrance_group():
+def create_group_deferred():
     try:
         create_vibrance_group()
     except:
-        return 0.5  # Retry in 0.5 seconds
-    return None  # Done
+        return 0.5
+    return None
+
+@persistent
+def ensure_group_on_file_load(dummy):
+    bpy.app.timers.register(create_group_deferred, first_interval=0.1)
 
 def register():
-    bpy.app.timers.register(safe_create_vibrance_group, first_interval=0.1)
+    if ensure_group_on_file_load not in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.append(ensure_group_on_file_load)
+    bpy.app.timers.register(create_group_deferred, first_interval=0.1)
 
 def unregister():
+    if ensure_group_on_file_load in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.remove(ensure_group_on_file_load)
     if "Amarillo's Vibrance" in bpy.data.node_groups:
         bpy.data.node_groups.remove(bpy.data.node_groups["Amarillo's Vibrance"])
-
 
 if __name__ == "__main__":
     register()
