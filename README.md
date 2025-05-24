@@ -17,12 +17,15 @@ A Blender addon that adds a Compositor Node Group called Amarillo's Vibrance. It
 ![](https://i.imgur.com/QjZ3s1E.png)
 
 **Vibrance**
+
 This is the emulation of Photoshop's Vibrance. It differs from Saturation as it boosts desaturated colors while leaving the more saturated ones. Regular saturation boosts indiscriminately, which produces darker and/or overblown colors in some cases.
 
 **Saturation Boost**
+
 This value lets you play with the falloff of the vibrance. 0 means regular Vibrance. 1 means an extra boosted vibrance that affects the saturated colors as well. Even with a Saturation Boost of 1, this Node Group produces a more visually pleasing look than pure Saturation. At least to my personal taste.
 
 **Fac**
+
 Your typical Blender "Fac" parameter that controls how much this node affets the mix. 0 means no Vibrance added at all (which is the same as not using this node). 1 means full effect.
 
 Wow you must be a genious!!
