@@ -22,14 +22,14 @@ def create_vibrance_group():
     v = group.interface.new_socket("Vibrance", in_out='INPUT', socket_type='NodeSocketFloat')
     v.default_value = 1.0
     v.min_value = 0.0
+    boost = group.interface.new_socket("Saturation Boost", in_out='INPUT', socket_type='NodeSocketFloat')
+    boost.default_value = 0.0
+    boost.min_value = 0.0
+    boost.max_value = 1.0
     f = group.interface.new_socket("Fac", in_out='INPUT', socket_type='NodeSocketFloat')
     f.default_value = 1.0
     f.min_value = 0.0
     f.max_value = 1.0
-    falloff = group.interface.new_socket("Falloff", in_out='INPUT', socket_type='NodeSocketFloat')
-    falloff.default_value = 2.0
-    falloff.min_value = 0.0
-    falloff.max_value = 5.0
     group.interface.new_socket("Image", in_out='OUTPUT', socket_type='NodeSocketColor')
 
     input = group.nodes.new("NodeGroupInput")
@@ -170,7 +170,18 @@ def create_vibrance_group():
     group.links.new(min2.outputs[0], sat.inputs[1])
     group.links.new(sat.outputs[0], inv_sat.inputs[1])
     group.links.new(inv_sat.outputs[0], curve.inputs[0])
-    group.links.new(input.outputs["Falloff"], curve.inputs[1])
+    invert_boost = group.nodes.new("CompositorNodeMath")
+    invert_boost.operation = 'SUBTRACT'
+    invert_boost.inputs[0].default_value = 1.0
+    invert_boost.location = (-50, -250)
+
+    remap_boost = group.nodes.new("CompositorNodeMath")
+    remap_boost.operation = 'MULTIPLY'
+    remap_boost.inputs[1].default_value = 5.0
+    remap_boost.location = (100, -250)
+    group.links.new(input.outputs["Saturation Boost"], invert_boost.inputs[1])
+    group.links.new(invert_boost.outputs[0], remap_boost.inputs[0])
+    group.links.new(remap_boost.outputs[0], curve.inputs[1])
     group.links.new(curve.outputs[0], scaled.inputs[0])
     group.links.new(input.outputs["Vibrance"], scaled.inputs[1])
     group.links.new(scaled.outputs[0], final_boost.inputs[1])
@@ -204,34 +215,22 @@ def create_vibrance_group():
 
     return group
 
-class AmarillosVibranceOperator(bpy.types.Operator):
-    bl_idname = "node.add_amarillos_vibrance"
-    bl_label = "Amarillo's Vibrance"
-    bl_options = {'REGISTER', 'UNDO'}
+import bpy.app.timers
 
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.type == 'NODE_EDITOR' and context.space_data.tree_type == 'CompositorNodeTree'
-
-    def execute(self, context):
-        group = create_vibrance_group()
-        bpy.ops.node.add_node(type="CompositorNodeGroup")
-        node = context.active_node
-        node.node_tree = group
-        return {'FINISHED'}
-
-def menu_func(self, context):
-    self.layout.operator("node.add_amarillos_vibrance", text="Amarillo's Vibrance")
+def safe_create_vibrance_group():
+    try:
+        create_vibrance_group()
+    except:
+        return 0.5  # Retry in 0.5 seconds
+    return None  # Done
 
 def register():
-    bpy.utils.register_class(AmarillosVibranceOperator)
-    bpy.types.NODE_MT_add.append(menu_func)
+    bpy.app.timers.register(safe_create_vibrance_group, first_interval=0.1)
 
 def unregister():
-    bpy.utils.unregister_class(AmarillosVibranceOperator)
-    bpy.types.NODE_MT_add.remove(menu_func)
     if "Amarillo's Vibrance" in bpy.data.node_groups:
         bpy.data.node_groups.remove(bpy.data.node_groups["Amarillo's Vibrance"])
+
 
 if __name__ == "__main__":
     register()
