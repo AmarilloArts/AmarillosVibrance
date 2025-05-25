@@ -3,20 +3,20 @@
 ## What is this?
 A Blender addon that adds a Compositor Node Group called Amarillo's Vibrance. It tries to emulate Photoshop's Vibrance adjustment while adding a little extra on top.
 
-**Unprocessed colors:**
+**Unprocessed colors 🤓:**
 
 ![](https://i.imgur.com/qcavzim.png)
 
-**Amarillo's Vibrance:**
+**Amarillo's Vibrance 😎:**
 
 The difference with "Unprocessed colors" is subtle, but huge in the proper context. Here the skin tones look richer, while leaving the stronger colors less affected - or not at all.
 ![](https://i.imgur.com/i6UICcI.png)
 
-**Vanilla Saturation:**
+**Vanilla Saturation 🤓:**
 
 ![](https://i.imgur.com/fyrVHov.png)
 
-**Amarillo's Vibrance Boosted:**
+**Amarillo's Vibrance Boosted 😎:**
 
 ![](https://i.imgur.com/Mbdp7V2.png)
 
